@@ -1,1 +1,1 @@
-Humming along with @wesbos his [JavaScript30](https://www.JavaScript30.com) course
+Humming along with [wesbos](http://wesbos.com) his [JavaScript30](https://www.JavaScript30.com) course
