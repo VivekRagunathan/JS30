@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>DrumKit</title>
+
+    <style>
+        html {
+            font-size: 10px;
+            /*background: url(https://i.imgur.com/b9r5sEL.jpg) bottom center;*/
+            background: url(cover.jpeg) bottom center;
+            background-size: cover;
+        }
+        
+        .keys {
+            display: flex;
+            flex: 1;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .key {
+            border: .4rem solid black;
+            border-radius: .5rem;
+            margin: 1rem;
+            font-size: 1.5rem;
+            padding: 1rem .5rem;
+            transition: all .07s ease;
+            min-width: 5rem;
+            text-align: center;
+            color: white;
+            background: rgba(0, 0, 0, 0.4);
+            text-shadow: 0 0 .5rem black;
+        }
+        
+        .playing {
+            transform: scale(1.1);
+            border-color: #FFC600;
+            box-shadow: 0 0 10px #FFC600;
+        }
+        
+        kbd {
+            display: block;
+            font-size: 40px;
+        }
+        
+        .sound {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .1rem;
+            color: #FFC600;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="keys" />
+
+    <div id="sounds" />
+
+    <script type="text/javascript">
+        
+        let strokes = "ASDFGHJKL";
+        let sounds = ["clap", "hihat", "kick", "openhat", "boom", "ride", "snare", "tom", "tink"];
+
+        function createAudioElements() {
+            let parent = document.getElementById("sounds");
+
+            strokes.split('').forEach((key, index) => {
+                let audio = document.createElement("audio");
+                audio.setAttribute("data-key", key);
+                audio.setAttribute("src", `sounds/${sounds[index]}.wav`);
+                parent.appendChild(audio);
+            });
+        }
+        
+        function onDrumKeyDown(event) {
+            const keyChar = String.fromCharCode(event.keyCode);
+            const key = document.querySelector(`.key[data-key="${keyChar}"]`);
+            const audio = document.querySelector(`audio[data-key="${keyChar}"]`);
+            
+            if (key) {
+                key.classList.add('playing');
+            }
+            
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play();
+            }
+        }
+
+        function onKeyPlayingStopped(event) {
+            if (event.propertyName !== 'transform') { return; }
+            event.target.classList.remove('playing');
+        }
+
+        function createDrumKeys() {
+            let parent = document.getElementsByClassName("keys")[0];
+
+            strokes.split('').forEach((key, index) => {
+                let code = strokes.charCodeAt(index);
+                let sound = sounds[index];
+
+                let kbd = document.createElement("kbd");
+                kbd.textContent = key;
+
+                let span = document.createElement("span");
+                span.setAttribute("class", "sound");
+                span.textContent = sound;
+
+                let div = document.createElement("div");
+                div.setAttribute("data-key", key);
+                div.setAttribute("class", "key");
+                div.appendChild(kbd);
+                div.appendChild(span);
+                // div.addEventListener('transitionend', onKeyPlayingStopped);
+
+                parent.appendChild(div);
+            });
+        }
+        
+        document.addEventListener("DOMContentLoaded", function(event) {
+            createAudioElements();
+            createDrumKeys();
+            
+            const keys = Array.from(document.querySelectorAll('.key'));
+            keys.forEach(key => key.addEventListener('transitionend', onKeyPlayingStopped));
+            window.addEventListener("keydown", onDrumKeyDown);
+        });
+
+    </script>
+</body>
+
+</html>
