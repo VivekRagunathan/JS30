@@ -12,7 +12,7 @@
             background: url(cover.jpeg) bottom center;
             background-size: cover;
         }
-        
+
         .keys {
             display: flex;
             flex: 1;
@@ -20,7 +20,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .key {
             border: .4rem solid black;
             border-radius: .5rem;
@@ -34,22 +34,22 @@
             background: rgba(0, 0, 0, 0.4);
             text-shadow: 0 0 .5rem black;
         }
-        
+
         .key:hover {
             cursor: pointer;
         }
-        
+
         .playing {
             transform: scale(1.1);
             border-color: #FFC600;
             box-shadow: 0 0 10px #FFC600;
         }
-        
+
         kbd {
             display: block;
             font-size: 40px;
         }
-        
+
         .sound {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -61,15 +61,15 @@
 </head>
 
 <body>
-   
+
     <div class="keys" />
 
     <div id="sounds" />
 
     <script type="text/javascript">
-        
-        let strokes = "ASDFGHJKL";
-        let sounds = ["clap", "hihat", "kick", "openhat", "boom", "ride", "snare", "tom", "tink"];
+
+        var strokes = "ASDFGHJKL";
+        var sounds = ["clap", "hihat", "kick", "openhat", "boom", "ride", "snare", "tom", "tink"];
 
         function createAudioElements() {
             let parent = document.getElementById("sounds");
@@ -81,36 +81,36 @@
                 parent.appendChild(audio);
             });
         }
-        
+
         function playSound(keyChar) {
             if (!keyChar) { return; }
-            
+
             const key = document.querySelector(`.key[data-key="${keyChar}"]`);
             const audio = document.querySelector(`audio[data-key="${keyChar}"]`);
-            
+
             if (key) {
                 key.classList.add('playing');
             }
-            
+
             if (audio) {
                 audio.currentTime = 0;
                 audio.play();
             }
         }
-        
+
         function onDrumKeyDown(event) {
             const keyChar = String.fromCharCode(event.keyCode);
             playSound(keyChar);
         }
-        
+
         function onEndTransition(event) {
             if (event.propertyName !== 'transform') { return; }
             event.target.classList.remove('playing');
         }
-        
+
         function onClickDrumKey(event) {
             event.stopPropagation();
-            
+
             const key = this.dataset["key"];
             if (!key) { return; }
             playSound(key);
@@ -141,7 +141,7 @@
                 parent.appendChild(div);
             });
         }
-        
+
         document.addEventListener("DOMContentLoaded", function(event) {
             createAudioElements();
             createDrumKeys();
