@@ -35,6 +35,10 @@
             text-shadow: 0 0 .5rem black;
         }
         
+        .key:hover {
+            cursor: pointer;
+        }
+        
         .playing {
             transform: scale(1.1);
             border-color: #FFC600;
@@ -57,6 +61,7 @@
 </head>
 
 <body>
+   
     <div class="keys" />
 
     <div id="sounds" />
@@ -77,8 +82,9 @@
             });
         }
         
-        function onDrumKeyDown(event) {
-            const keyChar = String.fromCharCode(event.keyCode);
+        function playSound(keyChar) {
+            if (!keyChar) { return; }
+            
             const key = document.querySelector(`.key[data-key="${keyChar}"]`);
             const audio = document.querySelector(`audio[data-key="${keyChar}"]`);
             
@@ -91,10 +97,23 @@
                 audio.play();
             }
         }
-
-        function onKeyPlayingStopped(event) {
+        
+        function onDrumKeyDown(event) {
+            const keyChar = String.fromCharCode(event.keyCode);
+            playSound(keyChar);
+        }
+        
+        function onEndTransition(event) {
             if (event.propertyName !== 'transform') { return; }
             event.target.classList.remove('playing');
+        }
+        
+        function onClickDrumKey(event) {
+            event.stopPropagation();
+            
+            const key = this.dataset["key"];
+            if (!key) { return; }
+            playSound(key);
         }
 
         function createDrumKeys() {
@@ -116,7 +135,8 @@
                 div.setAttribute("class", "key");
                 div.appendChild(kbd);
                 div.appendChild(span);
-                // div.addEventListener('transitionend', onKeyPlayingStopped);
+                div.addEventListener('transitionend', onEndTransition);
+                div.addEventListener('click', onClickDrumKey);
 
                 parent.appendChild(div);
             });
@@ -125,9 +145,6 @@
         document.addEventListener("DOMContentLoaded", function(event) {
             createAudioElements();
             createDrumKeys();
-            
-            const keys = Array.from(document.querySelectorAll('.key'));
-            keys.forEach(key => key.addEventListener('transitionend', onKeyPlayingStopped));
             window.addEventListener("keydown", onDrumKeyDown);
         });
 
